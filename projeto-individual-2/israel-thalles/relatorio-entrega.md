@@ -89,7 +89,11 @@ O sistema não se limitou ao tracking. Foi implementado o uso ativo do *Model Re
 
 ### 5.3 Evidências
 
-_Inclua prints da UI do MLflow ou logs mostrando os experimentos registrados._
+![Imagem mostrando os modelos do MLflow](modelos.png)
+
+![Imagem mostrando as versões do modelo](versoes.png)
+
+![Imagem mostrando a acurácia da versão 4](acuracia.png)
 
 ---
 
