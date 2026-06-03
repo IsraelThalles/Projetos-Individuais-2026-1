@@ -49,7 +49,8 @@ def extrair_fm_id(html: str) -> str | None:
 
 
 
-def obter_documentos_do_ano(fm_id: str, ano: int):
+def obter_documentos_do_ano(fm_id: str, ano: int) -> list:
+    """Obtém a lista de documentos para um ano específico usando o fmId da empresa."""
     url = (
         f"https://apicatalog.mziq.com/filemanager/company/"
         f"{fm_id}/filter/categories/year/meta"
@@ -126,6 +127,7 @@ def baixar_arquivo(url: str, destino: Path) -> None:
 
 
 def processar_empresa(nome_empresa: str, url: str, ano_inicial: int) -> None:
+    """Processa os dados de uma empresa, baixando as prévias operacionais dos anos especificados."""
     print(f"\nProcessando {nome_empresa}")
 
     try:
@@ -191,6 +193,7 @@ def gerar_nome_do_arquivo(previa: dict) -> str:
 
 
 def criar_pasta_da_empresa(nome_empresa: str) -> Path:
+    """Cria a pasta para a empresa, se ainda não existir, e retorna o caminho."""
     pasta_empresa = (
         PASTA_DADOS / nome_empresa
     )
@@ -204,6 +207,7 @@ def criar_pasta_da_empresa(nome_empresa: str) -> Path:
 
 
 def obter_dados_recentes():
+    """Obtém os dados mais recentes para todas as empresas listadas no arquivo de fontes."""
     empresas = carregar_fontes()
 
     for empresa in empresas:
