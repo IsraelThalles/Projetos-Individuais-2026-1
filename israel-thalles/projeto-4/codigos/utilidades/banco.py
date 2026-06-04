@@ -2,7 +2,7 @@ import sqlite3
 from pathlib import Path
 from typing import Optional
 from constantes import BANCO_DE_DADOS, DDL
-from utilidades.tipos import Documento, Resultado
+from utilidades.tipos import Documento
 
 
 

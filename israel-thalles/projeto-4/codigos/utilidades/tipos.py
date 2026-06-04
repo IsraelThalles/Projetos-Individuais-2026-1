@@ -1,5 +1,4 @@
-from dataclasses import dataclass
-from typing import Any, NamedTuple, Optional
+from typing import Any, NamedTuple
 
 
 class Documento(NamedTuple):
@@ -28,9 +27,3 @@ class Documento(NamedTuple):
             status_processamento=row["status_processamento"]
         )
     
-
-
-@dataclass
-class Resultado:
-    sucesso: bool
-    erro: Optional[Exception] = None
