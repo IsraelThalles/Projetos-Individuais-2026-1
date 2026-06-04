@@ -4,7 +4,7 @@ import json
 import re
 from datetime import datetime
 from typing import Literal
-from constantes import PASTA_DADOS, HEADERS, GET, POST, ARQUIVO_FONTES
+from utilidades.constantes import PASTA_DADOS, HEADERS, GET, POST, ARQUIVO_FONTES
 from utilidades.hash import calcular_hash
 from utilidades.banco import buscar_documento_por_hash, salvar_documento
 from utilidades.tipos import Documento
