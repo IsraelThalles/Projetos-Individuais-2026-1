@@ -8,9 +8,7 @@ def main():
     obter_conexao()
     
     try:
-        resultado = obter_dados_recentes()
-        if not resultado.sucesso:
-            print(f"Erro ao obter dados recentes: {resultado.erro}")
+        obter_dados_recentes()
     except Exception as erro:
         print(f"Erro ao obter dados recentes: {erro}")
     finally:
