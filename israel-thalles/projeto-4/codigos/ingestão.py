@@ -4,16 +4,17 @@ import json
 import re
 from datetime import datetime
 from typing import Literal
-from constantes import PASTA_DADOS, HEADERS, GET, POST
+from constantes import PASTA_DADOS, HEADERS, GET, POST, ARQUIVO_FONTES
 from utilidades.hash import calcular_hash
 from utilidades.banco import buscar_documento_por_hash, salvar_documento
-from utilidades.tipos import Documento, Resultado
+from utilidades.tipos import Documento
+from excecoes.exceções import ErroDeIdNaoEncontrado
 
 
 def carregar_fontes() -> list:
     """Carrega a lista de empresas e seus links a partir do arquivo JSON."""
     with open(
-        "fonte_de_dados.json",
+        ARQUIVO_FONTES,
         "r",
         encoding="utf-8"
     ) as arquivo:
@@ -146,13 +147,13 @@ def baixar_arquivo(url: str, destino: Path) -> None:
 
 
 
-def auditar_documento(caminho_arquivo: Path, url_origem: str) -> Resultado:
+def auditar_documento(caminho_arquivo: Path, url_origem: str) -> bool:
     """Audita um documento verificando se ele já existe no banco de dados pelo seu hash. Se for um documento novo, salva suas informações no banco de dados."""
     hash_do_documento = calcular_hash(caminho_arquivo)
     documento_existente = buscar_documento_por_hash(hash_do_documento)
 
     if documento_existente:
-        return Resultado(sucesso=False, erro=ValueError(f"Documento já existe no banco de dados: {caminho_arquivo.name} (Hash: {hash_do_documento})"))
+        return False
     
     try:
         documento = Documento(
@@ -169,18 +170,14 @@ def auditar_documento(caminho_arquivo: Path, url_origem: str) -> Resultado:
 
         print(f"Hash do documento: {documento.hash}")
 
-        resultado_auditoria = salvar_documento(documento)
-        if resultado_auditoria.sucesso:
-            return Resultado(sucesso=True, erro=None)
-        else:
-            return Resultado(sucesso=False, erro=resultado_auditoria.erro)
-    except Exception as e:
-        print(f"Erro ao auditar documento: {e}")
-        return Resultado(sucesso=False, erro=e)
+        salvar_documento(documento)
+    except Exception:
+        raise
+
+    return True
 
 
-
-def processar_empresa(nome_empresa: str, url: str, ano_inicial: int) -> Resultado:
+def processar_empresa(nome_empresa: str, url: str, ano_inicial: int) -> bool:
     """Processa os dados de uma empresa, baixando as prévias operacionais dos anos especificados."""
     print(f"\nProcessando {nome_empresa}")
 
@@ -189,7 +186,7 @@ def processar_empresa(nome_empresa: str, url: str, ano_inicial: int) -> Resultad
         fm_id = extrair_fm_id(obter_html(url))
 
         if not fm_id:
-            return Resultado(sucesso=False, erro=ValueError("fmId não encontrado no HTML da empresa."))
+            raise ErroDeIdNaoEncontrado(nome_empresa, url)
 
         ano_atual = datetime.now().year
 
@@ -215,30 +212,28 @@ def processar_empresa(nome_empresa: str, url: str, ano_inicial: int) -> Resultad
                 if not destino.exists():
                     print(f"Baixando: {destino.name}...")
 
-                    baixar_arquivo(previa["file_url"], destino)
+                    try:
+                        baixar_arquivo(previa["file_url"], destino)
+                    except Exception as erro:
+                        print(f"Erro ao baixar {destino.name}: {erro}")
+                        continue
                     total += 1
 
                 resultado = auditar_documento(destino, previa["file_url"])
-                if resultado.sucesso:
+                if resultado:
                     print(f"Documento novo: {destino.name}")
-                else:
-                    if isinstance(resultado.erro, ValueError):
-                        print(f"{resultado.erro}")
-                    else:
-                        print(f"Erro ao auditar documento {destino.name}: {resultado.erro}")
-                        return resultado
                     
                     
 
         print(
             f"{total} arquivos novos baixados."
         )
-
-    except Exception as erro:
+    except ErroDeIdNaoEncontrado as erro:
         print(f"Erro: {erro}")
-        return Resultado(sucesso=False, erro=erro)
+    except Exception:
+        raise
 
-    return Resultado(sucesso=True, erro=None)
+    return True
 
 
 
@@ -264,6 +259,7 @@ def criar_pasta_da_empresa(nome_empresa: str) -> Path:
     )
 
     pasta_empresa.mkdir(
+        parents=True,
         exist_ok=True
     )
     
@@ -271,29 +267,25 @@ def criar_pasta_da_empresa(nome_empresa: str) -> Path:
 
 
 
-def obter_dados_recentes() -> Resultado:
+def obter_dados_recentes() -> bool:
     """Obtém os dados mais recentes para todas as empresas listadas no arquivo de fontes."""
     empresas = carregar_fontes()
 
     try:
         for empresa in empresas:
 
-            resultado = processar_empresa(
+            processar_empresa(
                 nome_empresa=empresa["Empresa"],
                 url=empresa["Link"],
                 ano_inicial=empresa["Ano"]
             )
 
-            if not resultado.sucesso:
-                if isinstance(resultado.erro, ValueError):
-                    print(f"Erro ao processar {empresa['Empresa']}: {resultado.erro}")
-                else:
-                    return resultado
+    except ValueError as erro:
+        print(f"Erro: {erro}")
+    except Exception:
+        raise
 
-        return Resultado(sucesso=True, erro=None)
-    except Exception as erro:
-        print(f"Erro ao obter dados recentes: {erro}")
-        return Resultado(sucesso=False, erro=erro)
+    return True
     
 
 
