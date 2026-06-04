@@ -15,10 +15,10 @@ def criar_banco_se_nao_existir() -> None:
     caminho_banco = Path(BANCO_DE_DADOS)
 
     if not caminho_banco.exists():
-        print(f"Banco de dados não encontrado. Criando {caminho_banco.name}...")
+        print(f"Banco de dados não encontrado. Criando {str(caminho_banco)}...")
 
         if not caminho_ddl.exists():
-            raise FileNotFoundError(f"Arquivo DDL não encontrado: {caminho_ddl.name}")
+            raise FileNotFoundError(f"Arquivo DDL não encontrado: {str(caminho_ddl)}")
 
         conn = sqlite3.connect(caminho_banco)
         with open(caminho_ddl, 'r', encoding='utf-8') as arquivo:
@@ -86,7 +86,7 @@ def buscar_documento_por_hash(hash_do_documento: str) -> Optional[Documento]:
 
 
 
-def salvar_documento(documento: Documento) -> Resultado:
+def salvar_documento(documento: Documento) -> bool:
     """Insere um novo documento no banco de dados."""
     consulta = """
         INSERT INTO catalogo_documentos
@@ -98,8 +98,7 @@ def salvar_documento(documento: Documento) -> Resultado:
     try:
         executar_consulta(consulta, (documento.hash, documento.empresa, documento.ano, documento.trimestre, documento.nome_arquivo, documento.caminho_local, documento.url_origem))
         print(f"✓ Documento salvo no banco de dados: {documento.nome_arquivo} (Hash: {documento.hash})")
-        return Resultado(sucesso=True, erro=None)
-    except sqlite3.Error as e:
-        print(f"Erro ao inserir documento: {e}")
-        return Resultado(sucesso=False, erro=e)
+    except sqlite3.Error:
+        raise
 
+    return True
