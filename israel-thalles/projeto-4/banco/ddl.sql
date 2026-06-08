@@ -15,7 +15,7 @@ CREATE TABLE metricas_operacionais (
     empresa_referencia TEXT NOT NULL,
     categoria TEXT NOT NULL,
     nome_metrica TEXT NOT NULL,
-    valor REAL,
-    unidade_medida TEXT,
+    valor REAL NOT NULL,
+    unidade_medida TEXT NOT NULL,
     FOREIGN KEY (hash_documento) REFERENCES catalogo_documentos(hash) ON DELETE CASCADE
 );
