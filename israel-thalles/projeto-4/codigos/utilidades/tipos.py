@@ -1,6 +1,9 @@
 from typing import Any, Literal, NamedTuple
 
 
+
+ESTADO_DO_PROCESSAMENTO = Literal['CONCLUÍDO', 'PENDENTE', 'ERRO']
+
 class Documento(NamedTuple):
     hash: str
     publicador: str
@@ -9,7 +12,7 @@ class Documento(NamedTuple):
     nome_arquivo: str
     caminho_local: str
     data_ingestao: str
-    status_processamento: str
+    status_processamento: ESTADO_DO_PROCESSAMENTO
 
     @classmethod
     def from_row(cls, row: Any) -> "Documento":
@@ -25,4 +28,3 @@ class Documento(NamedTuple):
             status_processamento=row["status_processamento"]
         )
     
-ESTADO_DO_PROCESSAMENTO = Literal['CONCLUÍDO', 'PENDENTE', 'ERRO']
