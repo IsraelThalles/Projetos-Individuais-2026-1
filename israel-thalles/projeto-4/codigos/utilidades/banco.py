@@ -2,9 +2,9 @@ import sqlite3
 from pathlib import Path
 from typing import Optional
 from utilidades.constantes import BANCO_DE_DADOS, DDL
-from utilidades.tipos import Documento
+from utilidades.tipos import Documento, ESTADO_DO_PROCESSAMENTO
 from contrato_semântico import MetricaOperacional
-from contrato_semântico import Categoria
+from contrato_semântico import CATEGORIA
 
 
 
@@ -134,7 +134,7 @@ def salvar_metricas_documento(hash_documento: str, metricas: list[MetricaOperaci
 
 
 
-def buscar_metricas_operacionais_filtradas(empresa: Optional[str] = None, ano: Optional[int] = None, trimestre: Optional[int] = None, categoria: Optional[Categoria] = None):
+def buscar_metricas_operacionais_filtradas(empresa: Optional[str] = None, ano: Optional[int] = None, trimestre: Optional[int] = None, categoria: Optional[CATEGORIA] = None):
     """Busca as métricas operacionais pelos filtros fornecidos."""
     consulta = """
         SELECT 
@@ -167,3 +167,20 @@ def buscar_metricas_operacionais_filtradas(empresa: Optional[str] = None, ano: O
 
     resultado = executar_consulta(consulta, tuple(parametros), fetchall=True)
     return resultado
+
+
+
+def atualizar_status_documento(hash_documento: str, status: ESTADO_DO_PROCESSAMENTO) -> bool:
+    """Atualiza o status de processamento de um documento no catálogo."""
+    consulta = """
+        UPDATE catalogo_documentos 
+        SET status_processamento = ? 
+        WHERE hash = ?
+    """
+
+    try:
+        executar_consulta(consulta, (status, hash_documento))
+        return True
+    except sqlite3.Error as e:
+        print(f"Erro ao atualizar status do documento: {e}")
+        return False
