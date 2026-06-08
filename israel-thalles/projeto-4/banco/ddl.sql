@@ -6,7 +6,7 @@ CREATE TABLE catalogo_documentos (
     nome_arquivo TEXT NOT NULL,
     caminho_local TEXT NOT NULL,
     data_ingestao DATETIME DEFAULT CURRENT_TIMESTAMP,
-    status_processamento TEXT DEFAULT 'PENDENTE'
+    status_processamento TEXT DEFAULT 'PENDENTE' CHECK(status_processamento IN ('CONCLUÍDO', 'PENDENTE', 'ERRO'))
 );
 
 CREATE TABLE metricas_operacionais (
