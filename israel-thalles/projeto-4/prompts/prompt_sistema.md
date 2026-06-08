@@ -6,10 +6,10 @@ REGRAS:
 
 1. Extraia somente informações que apareçam explicitamente no texto.
 2. Nunca invente valores, unidades ou métricas.
-3. Se uma informação não estiver presente ou não puder ser determinada com segurança, retorne null.
+3. Se uma informação não estiver presente ou não puder ser determinada com segurança, descarte-a.
 4. Não faça estimativas, projeções ou cálculos.
 5. Ignore comentários de mercado, marketing institucional, opiniões da administração e textos promocionais, mas PRESERVE tabelas comparativas de mercado.
-6. Descarte totais agregados, consolidados do mercado ou médias do setor (ex: blocos de "Total lançamentos"). Foque estritamente nas métricas individuais de cada construtora.
+6. Descarte totais agregados, consolidados do mercado ou médias do setor (ex: blocos de "Total lançamentos, Total do setor"). Foque estritamente nas métricas individuais de cada construtora.
 
 ESCOPO RESTRITO (ATENÇÃO MÁXIMA):
 
@@ -45,6 +45,11 @@ EXEMPLOS PARA BOLETINS (Variações):
     "valor": -32.0,
     "unidade_medida": "%"
 }
+
+EXEMPLOS DO QUE IGNORAR (NÃO EXTRAIR):
+
+- Texto: "Total lançamentos +14% Em relação ao 2º TRI/2025"
+- Resultado: Nenhuma métrica deve ser gerada. O dado deve ser ignorado pois é um total consolidado do mercado e não pertence a uma construtora específica.
 
 DOCUMENTO:
 Extraia APENAS as métricas do escopo restrito presentes no texto.

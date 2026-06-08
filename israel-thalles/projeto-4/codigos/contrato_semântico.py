@@ -3,7 +3,7 @@ from typing import List, Literal, Optional
 
 
 
-CATEGORIA = Literal["Lançamentos", "Vendas", "Financeiro", "Estoque", "Produção", "Outros"]
+CATEGORIA = Literal["Lançamentos", "Vendas", "Produção"]
 
 
 class MetricaOperacional(BaseModel):
@@ -12,7 +12,7 @@ class MetricaOperacional(BaseModel):
         description="Classifique a métrica na macro-categoria que melhor a representa."
     )
     empresa_referencia: str = Field(
-        description="A qual construtora esta métrica pertence. Ex: MRV, Cury, Tenda, Direcional. Se for um dado geral da própria empresa do relatório, use o nome dela."
+        description="Nome da construtora individual (ex: MRV, Cury, Tenda, Direcional). É ESTRITAMENTE PROIBIDO usar termos agregados como 'Total', 'Total do Setor', 'Mercado' ou 'Geral'. Se o dado for um total de mercado, a métrica inteira deve ser ignorada."
     )
     nome_metrica: str = Field(
         description="Nome da métrica encontrada. Ex: Lançamentos (VGV), Vendas Líquidas, Banco de Terrenos, Unidades Produzidas, Geração de Caixa."

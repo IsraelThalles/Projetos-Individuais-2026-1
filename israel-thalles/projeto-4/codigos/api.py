@@ -18,7 +18,7 @@ def buscar_dados_conjuntura(
     empresa: Optional[str] = Query(None, description="Filtrar por construtora (ex: MRV, Cury)"),
     ano: Optional[int] = Query(None, description="Filtrar por ano do relatório (ex: 2025, 2026)"),
     trimestre: Optional[int] = Query(None, description="Filtrar por trimestre (1, 2, 3 ou 4)"),
-    categoria: Optional[CATEGORIA] = Query(None, description="Filtrar por macro-categoria (ex: 'Lançamentos', 'Vendas', 'Financeiro', 'Estoque', 'Produção', 'Outros')")
+    categoria: Optional[CATEGORIA] = Query(None, description="Filtrar por macro-categoria (ex: 'Lançamentos', 'Vendas', 'Produção')")
 ):
     """
     Retorna as métricas operacionais extraídas dos boletins e balanços,
