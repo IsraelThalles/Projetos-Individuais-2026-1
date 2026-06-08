@@ -1,12 +1,8 @@
-from pathlib import Path
 from datetime import datetime
 from utilidades.constantes import HEADERS, POST
-from utilidades.hash import calcular_hash
-from utilidades.banco import buscar_documento_por_hash, salvar_documento
-from utilidades.tipos import Documento
 from excecoes.exceções import ErroDeIdNaoEncontrado
 from utilidades.rede import enviar_requisicao, obter_html, extrair_fm_id, baixar_arquivo
-from utilidades.manipular_arquivo import carregar_arquivo_de_fontes, extrair_ano_do_nome_do_arquivo, extrair_trimestre_do_nome_do_arquivo, criar_arquivo, criar_pasta_da_empresa
+from utilidades.manipular_arquivo import carregar_arquivo_de_fontes, criar_arquivo, criar_pasta_da_empresa
 
 
 
