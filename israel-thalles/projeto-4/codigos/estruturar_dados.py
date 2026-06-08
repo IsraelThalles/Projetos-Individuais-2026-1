@@ -1,6 +1,7 @@
 import os
 import instructor
 from typing import cast
+from google import genai
 from openai import OpenAI
 from utilidades.manipular_arquivo import ler_prompt_sistema
 from contrato_semântico import RelatorioConjuntura
@@ -16,14 +17,13 @@ def extrair_dados_estruturados(texto_contexto: str, nome_arquivo_pdf: str) -> Re
     """
     Envia o texto do PDF para o LLM e retorna no formato da classe RelatorioConjuntura.
     """
-    cliente_local = OpenAI(
-        base_url="http://localhost:11434/v1",
-        api_key="ollama"
+    cliente_local = genai.Client(
+        api_key=os.getenv("CHAVE_API")
     )
 
-    cliente = instructor.from_openai(
-        cliente_local,
-        mode=instructor.Mode.JSON
+    cliente = instructor.from_genai(
+        cliente_local, 
+        mode=instructor.Mode.GENAI_STRUCTURED_OUTPUTS
     )
 
     print(f"  [🧠] Iniciando inferência para: {nome_arquivo_pdf}...")
@@ -32,12 +32,14 @@ def extrair_dados_estruturados(texto_contexto: str, nome_arquivo_pdf: str) -> Re
 
     try:
         dados_estruturados = cliente.chat.completions.create(
-            model="gemma4:e2b",
+            model="gemini-2.5-flash",
             response_model=RelatorioConjuntura,
             
-            temperature=0.0, 
-            
-            max_retries=0,
+            config={
+                "temperature": 0.0,
+                "max_output_tokens": 8192 
+            },
+            max_retries=2,
             messages=[
                 {
                     "role": "system",
