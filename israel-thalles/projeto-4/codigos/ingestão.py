@@ -86,7 +86,7 @@ def auditar_documento(caminho_arquivo: Path, url_origem: str) -> bool:
     try:
         documento = Documento(
             hash=hash_do_documento,
-            empresa=caminho_arquivo.parent.name,
+            publicador=caminho_arquivo.parent.name,
             ano=extrair_ano_do_nome_do_arquivo(caminho_arquivo.name),
             trimestre=extrair_trimestre_do_nome_do_arquivo(caminho_arquivo.name),
             nome_arquivo=caminho_arquivo.name,

@@ -3,7 +3,7 @@ from typing import Any, NamedTuple
 
 class Documento(NamedTuple):
     hash: str
-    empresa: str
+    publicador: str
     ano: int
     trimestre: int
     nome_arquivo: str
@@ -17,7 +17,7 @@ class Documento(NamedTuple):
         """Cria uma instância de Documento a partir de uma linha do banco de dados."""
         return cls(
             hash=row["hash"],
-            empresa=row["empresa"],
+            publicador=row["publicador"],
             ano=row["ano"],
             trimestre=row["trimestre"],
             nome_arquivo=row["nome_arquivo"],
