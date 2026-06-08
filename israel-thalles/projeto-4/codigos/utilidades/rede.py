@@ -2,8 +2,8 @@ import re
 import requests
 from pathlib import Path
 from typing import Literal
-from constantes import HEADERS, GET
-from manipular_arquivo import escrever_arquivo
+from utilidades.constantes import HEADERS, GET
+from utilidades.manipular_arquivo import escrever_arquivo
 
 
 
