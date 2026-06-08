@@ -7,3 +7,5 @@ instructor
 jsonref
 google-genai
 python-dotenv
+fastapi
+uvicorn
