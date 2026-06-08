@@ -2,7 +2,7 @@ import re
 import json
 import requests
 from pathlib import Path
-from utilidades.constantes import ARQUIVO_FONTES, PASTA_DADOS
+from utilidades.constantes import ARQUIVO_FONTES, PASTA_DADOS, ARQUIVO_PROMPT_SISTEMA
 from excecoes.exceções import ErroDeExtracaoDeDados
 
 
@@ -23,6 +23,13 @@ def carregar_arquivo_de_fontes() -> list:
         encoding="utf-8"
     ) as arquivo:
         return json.load(arquivo)
+    
+
+
+def ler_prompt_sistema() -> str:
+    """Lê o conteúdo do prompt no arquivo markdown dedicado."""
+    with open(ARQUIVO_PROMPT_SISTEMA, "r", encoding="utf-8") as arquivo:
+        return arquivo.read()
     
 
 
