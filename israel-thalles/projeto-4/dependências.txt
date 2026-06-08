@@ -1,3 +1,9 @@
 fastapi
 bs4
 requests
+pymupdf
+pydantic
+instructor
+jsonref
+google-genai
+python-dotenv
