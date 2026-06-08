@@ -1,4 +1,4 @@
-from typing import Any, NamedTuple
+from typing import Any, Literal, NamedTuple
 
 
 class Documento(NamedTuple):
@@ -25,3 +25,4 @@ class Documento(NamedTuple):
             status_processamento=row["status_processamento"]
         )
     
+ESTADO_DO_PROCESSAMENTO = Literal['CONCLUÍDO', 'PENDENTE', 'ERRO']
