@@ -1,7 +1,9 @@
+import re
 import json
 import requests
 from pathlib import Path
-from constantes import ARQUIVO_FONTES, PASTA_DADOS
+from utilidades.constantes import ARQUIVO_FONTES, PASTA_DADOS
+from excecoes.exceções import ErroDeExtracaoDeDados
 
 
 
@@ -25,20 +27,51 @@ def carregar_arquivo_de_fontes() -> list:
 
 
 def extrair_ano_do_nome_do_arquivo(nome_arquivo: str) -> int:
-    """Extrai o ano do nome do arquivo, assumindo o formato '[0-4]T[0-9][0-9].pdf'."""
-    try:
-        return int("20" + nome_arquivo[2:4])
-    except (IndexError, ValueError):
-        raise ValueError(f"Nome de arquivo inválido para extração de ano: {nome_arquivo}")
+    """
+    Extrai o ano do nome do arquivo.
+
+    Exemplos aceitos:
+    - 1T25.pdf
+    - MRV_2025_3T.pdf
+    - Boletim_Conjuntura_2025_3T.pdf
+    """
+
+    match = re.search(r"(20\d{2})", nome_arquivo)
+
+    if match:
+        return int(match.group(1))
+
+    match = re.search(r"([1-4])T(\d{2})", nome_arquivo)
+
+    if match:
+        return int(f"20{match.group(2)}")
+
+    raise ErroDeExtracaoDeDados(
+        nome_arquivo=nome_arquivo,
+        tipo_dado="ano"
+    )
 
 
 
 def extrair_trimestre_do_nome_do_arquivo(nome_arquivo: str) -> int:
-    """Extrai o trimestre do nome do arquivo, assumindo o formato '[0-4]T[0-9][0-9].pdf'."""
-    try:
-        return int(nome_arquivo[0])
-    except (IndexError, ValueError):
-        raise ValueError(f"Nome de arquivo inválido para extração de trimestre: {nome_arquivo}")
+    """
+    Extrai o trimestre do nome do arquivo.
+
+    Exemplos aceitos:
+    - 1T25.pdf
+    - MRV_2025_3T.pdf
+    - Boletim_Conjuntura_2025_3T.pdf
+    """
+
+    match = re.search(r"([1-4])T", nome_arquivo)
+
+    if match:
+        return int(match.group(1))
+
+    raise ErroDeExtracaoDeDados(
+        nome_arquivo=nome_arquivo,
+        tipo_dado="trimestre"
+    )
 
 
 
