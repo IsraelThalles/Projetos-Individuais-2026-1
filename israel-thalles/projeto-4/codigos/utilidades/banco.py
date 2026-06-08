@@ -1,9 +1,9 @@
 import sqlite3
 from pathlib import Path
 from typing import Optional
-from constantes import BANCO_DE_DADOS, DDL
+from utilidades.constantes import BANCO_DE_DADOS, DDL
 from utilidades.tipos import Documento
-
+from contrato_semântico import MetricaOperacional
 
 
 _conexao: sqlite3.Connection | None = None
@@ -90,15 +90,42 @@ def salvar_documento(documento: Documento) -> bool:
     """Insere um novo documento no banco de dados."""
     consulta = """
         INSERT INTO catalogo_documentos
-            (hash, empresa, ano, trimestre, nome_arquivo, caminho_local, url_origem)
+            (hash, publicador, ano, trimestre, nome_arquivo, caminho_local)
         VALUES
-            (?, ?, ?, ?, ?, ?, ?)
+            (?, ?, ?, ?, ?, ?)
     """
 
     try:
-        executar_consulta(consulta, (documento.hash, documento.empresa, documento.ano, documento.trimestre, documento.nome_arquivo, documento.caminho_local, documento.url_origem))
+        executar_consulta(consulta, (documento.hash, documento.publicador, documento.ano, documento.trimestre, documento.nome_arquivo, documento.caminho_local))
         print(f"✓ Documento salvo no banco de dados: {documento.nome_arquivo} (Hash: {documento.hash})")
     except sqlite3.Error:
         raise
 
+    return True
+
+
+
+def salvar_metricas_documento(hash_documento: str, metricas: list[MetricaOperacional]) -> bool:
+    """Insere em lote todas as métricas extraídas de um documento."""
+    consulta = """
+        INSERT INTO metricas_operacionais 
+            (hash_documento, empresa_referencia, categoria, nome_metrica, valor, unidade_medida)
+        VALUES 
+            (?, ?, ?, ?, ?, ?)
+    """
+    
+    try:
+        for metrica in metricas:
+            executar_consulta(consulta, (
+                hash_documento,
+                metrica.empresa_referencia,
+                metrica.categoria,
+                metrica.nome_metrica,
+                metrica.valor,
+                metrica.unidade_medida
+            ))
+        
+        print(f"✓ {len(metricas)} métricas operacionais salvas com sucesso!")
+    except sqlite3.Error:
+        raise
     return True
