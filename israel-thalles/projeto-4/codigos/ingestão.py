@@ -75,7 +75,7 @@ def filtrar_previas_operacionais(documentos: list) -> list:
 
 
 
-def auditar_documento(caminho_arquivo: Path, url_origem: str) -> bool:
+def auditar_documento(caminho_arquivo: Path) -> bool:
     """Audita um documento verificando se ele já existe no banco de dados pelo seu hash. Se for um documento novo, salva suas informações no banco de dados."""
     hash_do_documento = calcular_hash(caminho_arquivo)
     documento_existente = buscar_documento_por_hash(hash_do_documento)
@@ -91,7 +91,6 @@ def auditar_documento(caminho_arquivo: Path, url_origem: str) -> bool:
             trimestre=extrair_trimestre_do_nome_do_arquivo(caminho_arquivo.name),
             nome_arquivo=caminho_arquivo.name,
             caminho_local=str(caminho_arquivo),
-            url_origem=url_origem,
             data_ingestao=datetime.now().isoformat(),
             status_processamento="Pendente"
         )
@@ -146,13 +145,7 @@ def processar_empresa(nome_empresa: str, url: str, ano_inicial: int) -> bool:
                     except Exception as erro:
                         print(f"Erro ao baixar {destino.name}: {erro}")
                         continue
-                    total += 1
-
-                resultado = auditar_documento(destino, previa["file_url"])
-                if resultado:
-                    print(f"Documento novo: {destino.name}")
-                    
-                    
+                    total += 1             
 
         print(
             f"{total} arquivos novos baixados."
