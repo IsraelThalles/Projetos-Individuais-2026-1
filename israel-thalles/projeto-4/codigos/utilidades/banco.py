@@ -4,6 +4,8 @@ from typing import Optional
 from utilidades.constantes import BANCO_DE_DADOS, DDL
 from utilidades.tipos import Documento
 from contrato_semântico import MetricaOperacional
+from contrato_semântico import Categoria
+
 
 
 _conexao: sqlite3.Connection | None = None
@@ -129,3 +131,39 @@ def salvar_metricas_documento(hash_documento: str, metricas: list[MetricaOperaci
     except sqlite3.Error:
         raise
     return True
+
+
+
+def buscar_metricas_operacionais_filtradas(empresa: Optional[str] = None, ano: Optional[int] = None, trimestre: Optional[int] = None, categoria: Optional[Categoria] = None):
+    """Busca as métricas operacionais pelos filtros fornecidos."""
+    consulta = """
+        SELECT 
+            metricas_operacionais.empresa_referencia AS empresa,
+            catalogo_documentos.ano,
+            catalogo_documentos.trimestre,
+            metricas_operacionais.categoria,
+            metricas_operacionais.nome_metrica,
+            metricas_operacionais.valor,
+            metricas_operacionais.unidade_medida
+        FROM metricas_operacionais
+        JOIN catalogo_documentos ON metricas_operacionais.hash_documento = catalogo_documentos.hash
+        WHERE 1=1
+    """
+    parametros = []
+
+    # 2. Adicionamos os filtros dinamicamente caso o usuário tenha preenchido
+    if empresa:
+        consulta += " AND metricas_operacionais.empresa_referencia = ?"
+        parametros.append(empresa)
+    if ano:
+        consulta += " AND metricas_operacionais.ano = ?"
+        parametros.append(ano)
+    if trimestre:
+        consulta += " AND metricas_operacionais.trimestre = ?"
+        parametros.append(trimestre)
+    if categoria:
+        consulta += " AND metricas_operacionais.categoria = ?"
+        parametros.append(categoria)
+
+    resultado = executar_consulta(consulta, tuple(parametros), fetchall=True)
+    return resultado
