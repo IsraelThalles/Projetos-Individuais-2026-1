@@ -40,6 +40,8 @@ def obter_conexao() -> sqlite3.Connection:
         _conexao = sqlite3.connect(BANCO_DE_DADOS)
         _conexao.row_factory = sqlite3.Row
 
+    _conexao.execute("PRAGMA foreign_keys = ON;")
+
     return _conexao
 
 
